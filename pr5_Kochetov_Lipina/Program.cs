@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace pr5_Kochetov_Lipina
 {
-    internal class Program
+     class Program
     {
-        static void Main(string[] args)
+        public void Main(string[] args)
         {
         }
     }
