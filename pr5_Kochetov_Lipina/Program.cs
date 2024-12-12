@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Net.Sockets;
 
 
 namespace pr5_Kochetov_Lipina
@@ -53,6 +54,22 @@ namespace pr5_Kochetov_Lipina
             {
                 var Client = AllClients.Find(x => x.Token == Command);
                 return Client != null ? "/connect" : "/disconnect";
+            }
+        }
+        static void ConnectServer()
+        {
+            IPEndPoint EndPoint = new IPEndPoint(ServerIPAddress, ServerPort);
+            Socket SocketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            SocketListener.Bind(EndPoint);
+            SocketListener.Listen(MaxClient);
+            while (true)
+            {
+                Socket Handler = SocketListener.Accept();
+                byte[] bytes = new byte[10485760];
+                int byteRec = Handler.Receive(bytes);
+                string Message = Encoding.UTF8.GetString(bytes, 0, byteRec);
+                string Response = SetCommandClient(Message);
+                Handler.Send(Encoding.UTF8.GetBytes(Response));
             }
         }
         static void GetStatus()
