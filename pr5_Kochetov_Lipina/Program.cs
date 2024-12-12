@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Net.Sockets;
-
+using System.Threading;
 
 namespace pr5_Kochetov_Lipina
 {
@@ -20,6 +20,28 @@ namespace pr5_Kochetov_Lipina
         public void Main(string[] args)
         {
             OnSettings();
+            Thread tListner = new Thread(ConnectServer);
+            tListner.Start();
+            Thread tDisconnect = new Thread(DisconnectClient);
+            tDisconnect.Start();
+            while (true) SetCommand();
+        }
+        static void DisconnectClient()
+        {
+            while (true)
+            {
+                for (int i = 0; i < AllClients.Count; i++)
+                {
+                    int ClientDuration = (int)DateTime.Now.Subtract(AllClients[i].DateConnect).TotalSeconds;
+                    if (ClientDuration > Duration)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"Client: {AllClients[i].Token} disconnect from server due to timeout");
+                        AllClients.RemoveAt(i);
+                    }
+                }
+                Thread.Sleep(1000);
+            }
         }
         static void SetCommand()
         {
@@ -71,7 +93,9 @@ namespace pr5_Kochetov_Lipina
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error: " + ex.Message);
             }
-        }
+        } 
+
+
         static void ConnectServer()
         {
             IPEndPoint EndPoint = new IPEndPoint(ServerIPAddress, ServerPort);
@@ -116,6 +140,9 @@ namespace pr5_Kochetov_Lipina
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("  - show list users");
         }
+
+
+
         static void OnSettings()
         {
             string Path = Directory.GetCurrentDirectory() + "/.config";
@@ -150,6 +177,11 @@ namespace pr5_Kochetov_Lipina
             }
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("To change, write the command: /config");
+
+
+
+
+
         }
     }
 }
