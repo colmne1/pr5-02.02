@@ -130,7 +130,14 @@ namespace pr5_Kochetov_Lipina
                 Thread.Sleep(1000);
             }
         }
+        static void GetStatus()
+        {
+            int Duration = (int)DateTime.Now.Subtract(ClientDateConnection).TotalSeconds;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine($"Client: {ClientToken}, time connection: {ClientDateConnection.ToString("HH:mm:ss dd.MM")}, duration: {Duration}");
+        }
     }
 }
+
 
  
